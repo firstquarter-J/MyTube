@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Webpage Title -->
+    <title>MyTube</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.typekit.net/qtl6tnh.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="{{ url_for('static', filename='small_logo.png') }}" type="image/png">
+
+    <meta property="og:title" content="MyTube" />
+    <meta property="og:description" content="유투브 카테고리 기능을 당신에게" />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}" />
+
+
+
+    <style>
+        .title {
+            font-weight: 800;
+            font-size: 4rem;
+        {#font-family: 'Single Day', cursive;#} padding-bottom: 20px;
+            color: #0C090A;
+            cursor: pointer;
+            transition: transform 300ms ease;
+        }
+
+        .title:hover {
+            transform: scale(1.1);
+        }
+
+        .nickname {
+            font-family: 'Do Hyeon', sans-serif;
+            font-size: 25px;
+            margin-left: 75%;
+            margin-top: 25px;
+        }
+
+        .hr {
+            size: 4px;
+            width: 70%;
+            margin: auto;
+            background-color: black;
+            margin-bottom: 30px;
+        }
+
+        .button {
+            font-family: 'Do Hyeon', sans-serif;
+            transition: transform 300ms ease;
+        }
+
+        #btn3 {
+            background-color: #0C090A;
+            width: 90px;
+            height: 35px;
+        }
+
+        .mb-3 {
+            margin-bottom: .75rem !important;
+            margin-top: -20px;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+        }
+
+        .field {
+            width: 50%;
+            margin: auto;
+        }
+
+        .category {
+            width: 600px;
+            margin: auto;
+            padding: 50px;
+        }
+
+        .card-columns {
+            text-align: center;
+            width: 70%;
+            margin : auto;
+        }
+
+        .btn-group-lg > .btn, .btn-lg {
+            padding: .5rem 1rem;
+            font-size: 1.25rem;
+            line-height: 1.5;
+            border-radius: .3rem;
+            margin-left: 100px;
+        }
+
+        #img {
+            height: auto;
+            max-width: 10%;
+            margin-left: -20px;
+        }
+
+        .wrap{
+            margin-bottom: 60px;
+        }
+
+        .card{
+            margin:20px
+        }
+    </style>
+
+    <script>
+        {#로그아웃 함수#}
+
+        function logout() {
+            $.removeCookie('mytoken');
+            alert('다음에 또 봐요')
+            window.location.href = '/login'
+        }
+
+        {#카테고리 서버에서 불러오는 함수#}
+        $(document).ready(function () {
+            $('#new_category').empty()
+            view_category();
+        });
+
+        {#카테고리 작성 함수#}
+
+        function new_category() {
+            let category = $('#new_category').val();
+            if (category == "") {
+                alert('카테고리를 입력하세요')
+                return;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/api/new_category",
+                data: {category_give: category},
+
+                success: function (response) {
+                    alert(response['msg'])
+                    window.location.reload();
+
+                }
+
+            })
+        }
+
+        {#저장된 카테고리 불러오는 함수#}
+
+        function view_category() {
+            // 카테고리 목록 보기 API 연결
+            $.ajax({
+                type: "GET",
+                url: "/api/new_category",
+                data: {},
+                success: function (response) {
+                    let categories = response['all_categories'];
+                    for (let i = 0; i < categories.length; i++) {
+                        let category = categories[i]['category'];
+
+                        temp_html = `<div class="card border-light mb-3" style="max-width: 18rem;">
+                                            <div class="card-header">
+                                                <button id="btn-delete" class="btn btn-sparta btn-lg" onclick="delete_category('${category}')">
+                                                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                                                </button>
+                                            </div>
+                                            <div class="card-body">
+                                                <a class="card-title"  href="/channel?category=${category}"> ${category} </a>
+                                            </div>
+                                        </div>`
+                        $('#category_list').append(temp_html)
+                    }
+
+                }
+            })
+        }
+
+        function delete_category(category) {
+            $.ajax({
+                type: 'POST',
+                url: '/api/delete_category',
+                data: {category_give: category},
+                {#data: { category_give: "{{ category }}" } ,#}
+                success: function (response) {
+                    alert(response['msg']);
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+
+</head>
+<body>
+{#    로그인한 사용자 표시#}
+<div class="nickname" id="nickname"><img src="/static/heart.png" id="img"> {{ nickname }}님 반갑습니다
+    {#    로그아웃 버튼#}
+    <button class="button is-danger" id=btn3 onclick="logout()">로그아웃하기</button>
+</div>
+
+{#        타이틀 & 메인페이지 링크#}
+<section class="hero is-white">
+    <div class="hero-body has-text-centered" style="padding-bottom:1rem;margin:auto;">
+        <a href="/"><h1 class="title">MyTube</h1></a>
+    </div>
+</section>
+<hr class="hr">
+<div class="wrap">
+    <div class="category">
+        <div class="input-group mb-3">
+            <input id="new_category" type="text" class="form-control" placeholder="만들고 싶은 카테고리를 입력하세요"
+                   aria-describedby="button-addon2">
+            <button onclick="new_category()" class="btn btn-outline-secondary" type="button" id="button-addon2"><i
+                    class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="category_list" class="card-columns">
+
+
+    </div>
+</div>
+
+</div>
+
+
+</body>
+
+</html>

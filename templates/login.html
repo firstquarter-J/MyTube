@@ -1,0 +1,160 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Webpage Title -->
+    <title>MyTube</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
+
+    <link rel="icon" href="{{ url_for('static', filename='small_logo.png') }}" type="image/png">
+
+        <meta property="og:title" content="MyTube" />
+    <meta property="og:description" content="유투브 카테고리 기능을 당신에게" />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}" />
+
+    <style>
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .logo {
+        {#text-align: center;#} width: 60px;
+            margin: auto;
+            margin-top: 12%;
+            cursor: pointer;
+            transition: transform 300ms ease;
+        }
+
+        .title {
+            font-weight: 750;
+            font-size: 3rem;
+        {#font-family: 'Single Day', cursive;#} font-family: 'Do Hyeon', sans-serif;
+            padding-bottom: 15px;
+            color: #0C090A;
+            cursor: pointer;
+            transition: transform 300ms ease;
+        }
+
+        .title:hover {
+            transform: scale(1.1);
+        }
+
+        .subtitle {
+            font-size: 2rem;
+            font-family: 'Do Hyeon', sans-serif;
+        }
+
+        .button {
+            font-family: 'Do Hyeon', sans-serif;
+            cursor: pointer;
+            transition: transform 300ms ease;
+        }
+
+        .button.is-dark {
+            background-color: #363636;
+            border-color: transparent;
+            color: #fff;
+            font-size: 17px;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            transform: scale(1.1);
+        }
+
+        .section {
+            width: 50%;
+            margin: auto;
+            padding: 1rem 1.5rem;
+        }
+
+        .hero-body {
+            flex-grow: 1;
+            flex-shrink: 0;
+            padding: 1rem 1rem;
+        }
+
+    </style>
+
+    <script>
+        function login() {
+            $.ajax({
+                type: "POST",
+                url: "/api/login",
+                data: {
+                    id_give: $('#userid').val(),
+                    pw_give: $('#userpw').val()
+                },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        $.cookie('mytoken', response['token']);
+                        alert('Welcome MyTube!')
+                        window.location.href = '/'
+                    } else {
+                        alert(response['msg'])
+                    }
+                }
+            })
+        }
+    </script>
+</head>
+<body>
+{#        로고 & 유튜브 링크#}
+<div class="logo">
+    <a href="https://www.youtube.com/" target="_blank"><img src="/static/small_logo.png"></a>
+</div>
+
+{#        타이틀 & 메인페이지 링크#}
+<section class="hero is-white">
+    <div class="hero-body has-text-centered" style="padding-bottom:1rem;margin:auto;">
+        <a href="/"><h1 class="title">MyTube</h1></a>
+    </div>
+</section>
+
+<div class="section has-text-centered">
+    <div class="container" style="width:60%">
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="userid" style="width: 80px">아이디</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input type="text" class="input" id="userid" aria-describedby="emailHelp"
+                               placeholder="아이디">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label" for="userpw" style="width: 80px">비밀번호</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input type="password" class="input" id="userpw" placeholder="비밀번호">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="button is-dark" onclick="login()">로그인</button>
+        <a href="{{ url_for('register') }}">
+            <button class="button is-dark">회원가입</button>
+        </a>
+
+    </div>
+</div>
+</body>
+</html>
